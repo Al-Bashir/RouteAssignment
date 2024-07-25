@@ -1,6 +1,8 @@
 ﻿using C42_G01_OOP05_Demo.Abstraction;
 using C42_G01_OOP05_Demo.Casting_Operator_Overloading;
 using C42_G01_OOP05_Demo.Operator_Overloading;
+using C42_G01_OOP05_Demo.Partial;
+using C42_G01_OOP05_Demo.Static;
 
 namespace C42_G01_OOP05_Demo
 {
@@ -38,7 +40,7 @@ namespace C42_G01_OOP05_Demo
 
             string S1 = C4;
 
-            Employee employee = new Employee() 
+            Casting_Operator_Overloading.Employee employee = new Casting_Operator_Overloading.Employee() 
             {
                 Id = 1,
                 FullName = "S1",
@@ -63,6 +65,29 @@ namespace C42_G01_OOP05_Demo
             Circle circle = new Circle(30);
             Console.WriteLine(circle.CalcArea());
             Console.WriteLine(circle.Perimeter);
+            #endregion
+
+            #region Static
+            //Utility utility = new Utility(1, 2);  
+            //Console.WriteLine(utility.CmToInch(254));            
+            //Utility utility2 = new Utility(100, 200);  
+            //Console.WriteLine(utility.CmToInch(254));
+
+            Console.WriteLine(Utility.CmToInch(254));
+
+            //Utility utility3 = new Utility(1, 2);
+            Console.WriteLine(Utility.CalcCircleArea(10));
+
+
+            #endregion
+
+            #region Sealed
+
+            #endregion
+
+            #region Partial
+            Partial.Employee employee1 = new Partial.Employee();
+            employee1.Print();
             #endregion
         }
     }
