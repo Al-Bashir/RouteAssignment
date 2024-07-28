@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RouteExam02.Classes
 {
-    internal abstract class Question
+    internal abstract class Question : ICloneable, IComparable
     {
         #region Properties
         public string Header { get; set; }
@@ -14,7 +14,7 @@ namespace RouteExam02.Classes
         public int Mark { get; set; }
         public abstract int RightAnswerId { get; set; }
         public int UserQuestionAnswer { get; set; }
-        public abstract bool QuestionResult { get; }
+        public abstract bool QuestionResult { get; protected set; }
 
 
         #endregion
@@ -38,6 +38,11 @@ namespace RouteExam02.Classes
         #region Methods
         public abstract string GetRightAnswer();
         public abstract string GetUserAnswer();
+
+        public abstract object Clone();
+
+        public abstract int CompareTo(object? obj);
+
         #endregion
     }
 }

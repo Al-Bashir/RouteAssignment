@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace RouteExam02.Classes
 {
-    internal class MCQ : Question
+    internal class MCQ : Question, ICloneable, IComparable
     {
         #region Properties
         public Answer<string>[] Answers { get; set; }
         public override int RightAnswerId { get; set; }
-        public override bool QuestionResult { get { return UserQuestionAnswer == RightAnswerId; } }
+        public override bool QuestionResult { get { return UserQuestionAnswer == RightAnswerId; } protected set { } }
         #endregion
 
         #region Constructor
@@ -42,6 +42,26 @@ namespace RouteExam02.Classes
         public override string GetUserAnswer()
         {
             return UserQuestionAnswer == 0 ? "Not Solved" : Answers[UserQuestionAnswer - 1].AnswerText;
+        }
+
+        public override object Clone()
+        {
+            MCQ ClonedTrueOrFalse = new MCQ((string)Body.Clone(), Mark, (Answer<string>[])Answers.Clone(), RightAnswerId);
+            ClonedTrueOrFalse.UserQuestionAnswer = UserQuestionAnswer;
+            ClonedTrueOrFalse.QuestionResult = QuestionResult;
+            return ClonedTrueOrFalse;
+        }
+
+        public override int CompareTo(object? x)
+        {
+            if (x == null)
+                return 1;
+            MCQ other = (MCQ)x;
+            if (Mark > other?.Mark)
+                return 1;
+            else if (Mark < other?.Mark)
+                return -1;
+            return 0;
         }
         #endregion
     }

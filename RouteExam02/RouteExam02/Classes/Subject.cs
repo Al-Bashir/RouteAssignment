@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RouteExam02.Classes
 {
-    internal class Subject
+    internal class Subject : ICloneable, IComparable<Subject>
     {
         #region Properties
         public int SubjectID { get; }
@@ -47,6 +47,18 @@ namespace RouteExam02.Classes
             Console.Clear();
             SubjectExam.CalcGrad();
             SubjectExam.ShowExamResult();
+        }
+
+        public object Clone()
+        {
+            Subject ClonedSubject = new Subject(SubjectID, SubjectName);
+            ClonedSubject.SubjectExam = SubjectExam.Clone();
+            return ClonedSubject;
+        }
+
+        public int CompareTo(Subject? other)
+        {
+            return SubjectID.CompareTo(other?.SubjectID);
         }
         #endregion
     }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RouteExam02.Classes
 {
-    internal class Grade
+    internal class Grade : ICloneable<Grade>, IComparable<Grade>
     {
         public int StudentGrade { get; set; }
         public int FullMarkGrade{ get; set; }
@@ -17,5 +17,18 @@ namespace RouteExam02.Classes
             FullMarkGrade = fullMarkGradeStudentGrade;
         }
 
+        public Grade Clone()
+        {
+            return new Grade(StudentGrade, FullMarkGrade);
+        }
+
+        public int CompareTo(Grade? other)
+        {
+            if (StudentGrade > other?.StudentGrade) 
+                return 1;
+            else if (StudentGrade < other?.StudentGrade)
+                return -1;
+            return 0;
+        }
     }
 }

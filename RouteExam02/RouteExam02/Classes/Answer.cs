@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RouteExam02.Classes
 {
-    internal class Answer<T>
+    internal class Answer<T> : ICloneable, IComparable<Answer<T>>
     {
         #region Properties
         public int AnswerId { get; }
@@ -25,6 +25,20 @@ namespace RouteExam02.Classes
         public override string ToString()
         {
             return $"{AnswerId}- {AnswerText.ToString()}\n";
+        }
+
+        public object Clone()
+        {
+            return new Answer<T>(AnswerId, AnswerText);
+        }
+
+        public int CompareTo(Answer<T>? other)
+        {
+            if(AnswerId > other.AnswerId)
+                return 1;
+            else if(AnswerId < other.AnswerId)
+                return -1;
+            return 0;
         }
         #endregion
 

@@ -6,12 +6,8 @@ using System.Threading.Tasks;
 
 namespace RouteExam02.Classes
 {
-    internal abstract class Exam
+    internal abstract class Exam : IComparable<Exam>, ICloneable<Exam>
     {
-        #region Fields
-        private protected int[] StudentAnswersIds;
-        #endregion
-
         #region Properties
         public TimeSpan ExamDuration { get; set; }
         public int QuestionNumber { get; set; }
@@ -107,6 +103,13 @@ namespace RouteExam02.Classes
         public abstract void StartStudentExamination();
         public abstract void ShowExamResult();
         public abstract Grade CalcGrad();
+
+        public int CompareTo(Exam? obj) 
+        {
+            return Grade.CompareTo(obj?.Grade);
+        }
+
+        public abstract Exam Clone();
         #endregion
     }
 }

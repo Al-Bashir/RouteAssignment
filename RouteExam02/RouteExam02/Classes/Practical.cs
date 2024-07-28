@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RouteExam02.Classes
 {
-    internal class Practical : Exam
+    internal class Practical : Exam, ICloneable<Exam>
     {
         #region Properties
         public MCQ[] MCQQuestions { get; set; }
@@ -59,6 +59,16 @@ namespace RouteExam02.Classes
                 Console.WriteLine("Timeout!!! \nYou Ran Out Of Time. \nYou Will Navigated To Your Result");
                 Thread.Sleep(10000);
             }
+        }
+
+        public override Exam Clone()
+        {
+            Practical ClonedPracticalExam = new Practical(ExamDuration, QuestionNumber);
+            ClonedPracticalExam.MCQQuestions = (MCQ[])MCQQuestions.Clone();
+            ClonedPracticalExam.Grade = Grade.Clone();
+            ClonedPracticalExam.ExamStartTime = ExamStartTime;
+            ClonedPracticalExam.ExamEndTime = ExamEndTime;
+            return ClonedPracticalExam;
         }
         #endregion
     }

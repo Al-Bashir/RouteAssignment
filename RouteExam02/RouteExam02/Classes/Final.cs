@@ -57,5 +57,15 @@
                 Thread.Sleep(10000);
             }
         }
+
+        public override Exam Clone()
+        {
+            Final ClonedFinallExam = new Final(ExamDuration, QuestionNumber);
+            ClonedFinallExam.Questions = (Question[])Questions.Clone();
+            ClonedFinallExam.Grade = Grade.Clone();
+            ClonedFinallExam.ExamStartTime = ExamStartTime;
+            ClonedFinallExam.ExamEndTime = ExamEndTime;
+            return ClonedFinallExam;
+        }
     }
 }

@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace RouteExam02.Classes
 {
-    internal class TrueOrFalse : Question
+    internal class TrueOrFalse : Question, ICloneable,IComparable
     {
         #region Properties
         public override int RightAnswerId { get; set; }
-        public Answer<bool>[] Answers { get; }
-        public override bool QuestionResult { get { return UserQuestionAnswer == RightAnswerId; } }
+        public Answer<bool>[] Answers { get; set; }
+        public override bool QuestionResult { get { return UserQuestionAnswer == RightAnswerId; } protected set { } }
         #endregion
 
         #region Constructor
@@ -38,6 +38,27 @@ namespace RouteExam02.Classes
         public override string GetUserAnswer()
         {
             return UserQuestionAnswer == 0 ? "Not Solved" : Answers[UserQuestionAnswer - 1].AnswerText.ToString();
+        }
+
+        public override object Clone()
+        {
+            TrueOrFalse ClonedTrueOrFalse = new TrueOrFalse((string)Body.Clone(), Mark, RightAnswerId);
+            ClonedTrueOrFalse.Answers = (Answer<bool>[])Answers.Clone();
+            ClonedTrueOrFalse.UserQuestionAnswer = UserQuestionAnswer;
+            ClonedTrueOrFalse.QuestionResult= QuestionResult;
+            return ClonedTrueOrFalse;
+        }
+
+        public override int CompareTo(object? x)
+        {
+            if (x == null)
+                return 1;
+            TrueOrFalse other = (TrueOrFalse)x;
+            if (Mark > other?.Mark)
+                return 1;
+            else if (Mark < other?.Mark)
+                return -1;
+            return 0;
         }
         #endregion
 
