@@ -111,15 +111,17 @@ namespace RouteExam02.Classes
             bool UserInputCheckerFlage = true;
             bool IsFirstTime = false;
             Console.WriteLine("Do You Want To Start The Exam? (Y|N)");
+            char UserStartExamChoiceTemp;
             char UserStartExamChoice;
             IsFirstTime = false;
             do
             {
                 if (!UserInputCheckerFlage || IsFirstTime)
                     Console.WriteLine("The Value You Entered Is Invalid, Please Try Again With A Valid Char:");
-                UserInputCheckerFlage = char.TryParse(Console.ReadLine(), out UserStartExamChoice);
+                UserInputCheckerFlage = char.TryParse(Console.ReadLine(), out UserStartExamChoiceTemp);
+                UserStartExamChoice = Char.ToLower(UserStartExamChoiceTemp);
                 IsFirstTime = true;
-            } while (!UserInputCheckerFlage || !(Char.ToLower(UserStartExamChoice) == 'y' || Char.ToLower(UserStartExamChoice) == 'n'));
+            } while (!UserInputCheckerFlage || !(UserStartExamChoice == 'y' || UserStartExamChoice == 'n'));
             return UserStartExamChoice;
         }
         #endregion

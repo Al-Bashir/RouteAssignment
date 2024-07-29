@@ -17,7 +17,7 @@ namespace RouteExam02.Classes
         #region Constructor
         public MCQ(string body, int mark, Answer<string>[] answers, int rightAnswer) : base("MCQ Question", body, mark)
         {
-            Answers = answers;
+            Answers = (Answer<string>[]) answers.Clone();
             RightAnswerId = rightAnswer;
         }
 
