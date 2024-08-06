@@ -2,9 +2,11 @@
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static void Main( )
         {
-            Console.WriteLine("Hello, World!");
+            StringFuncDelegate stringFuncDelegate = FunctionsClass1.GEtCountOfUpperChars;
+            int Result = stringFuncDelegate.Invoke("Ahmed");
+            Console.WriteLine(Result);
         }
     }
 }
