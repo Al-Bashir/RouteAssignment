@@ -15,7 +15,7 @@ namespace C42_G01_ADV03_Demo
                 {
                     for (int j = 0; j < arr.Length - i - 1; j++)
                     {
-                        if ((arr[j] > arr[j + 1])
+                        if ((arr[j] > arr[j + 1]))
                             SWAP(ref arr[j], ref arr[j + 1]);
                     }
                 }
