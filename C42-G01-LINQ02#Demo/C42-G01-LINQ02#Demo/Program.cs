@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Linq;
 using static Route_LINQ_Data_ListGenerator.ListGenerator;
+using Route_LINQ_Data_ListGenerator;
+using System.Text.RegularExpressions;
 
 namespace C42_G01_LINQ02_Demo
 {
@@ -61,6 +63,10 @@ namespace C42_G01_LINQ02_Demo
             //Query Syntax
             SelectResult = from Product in ProductsList
                            select Product.ProductName;
+            
+            Console.WriteLine("count***" + SelectResult.Count());
+            foreach (var P in SelectResult )
+                Console.WriteLine("Product Name***: " + P);
 
             //Select more than one Property of Product using Anonymous Class
             //Fluent Syntax
@@ -73,14 +79,24 @@ namespace C42_G01_LINQ02_Demo
             foreach (var P in SelectResult02)
                 Console.WriteLine(P);
 
+
             Console.WriteLine("=============SelectMany================");
             //2.1 SelectMany 
             //when the sequence contain another sequence and you want to select this each sequence
+            var SelectManyResult = CustomersList.SelectMany(C => C.Orders);
 
-            
-            
-            
-            
+            SelectManyResult = from C in CustomersList
+                               from O in C.Orders
+                               select O;
+
+            Console.WriteLine("count*SelectManyResult " + SelectManyResult.Count());
+            foreach (var P in SelectManyResult)
+                Console.WriteLine(P);
+
+
+
+            Console.WriteLine("=============SelectMany + spread operator================");
+
             var SlectMany01 = ProductsList.Where(P => P.UnitsInStock > 0).Select((P) => new
             {
                 P.ProductID,
@@ -89,7 +105,10 @@ namespace C42_G01_LINQ02_Demo
             });
 
             //Indexed Select
-           //****// SelectResult = ProductsList.Select((P,I) => P.ProductName && I < 10);
+            Console.WriteLine("=============SelectIndex================");
+            var SelectIndexResult = ProductsList.Select((P,Index) => new { Index, P.ProductName});
+            foreach (var P in SelectIndexResult)
+                Console.WriteLine(P);
 
 
             foreach (var P in SlectMany01)
@@ -184,6 +203,123 @@ namespace C42_G01_LINQ02_Demo
             var SumResult = ProductsList.Sum(P => P.UnitPrice);
             Console.WriteLine($"Sum: {SumResult}");
 
+            #endregion
+            #region Casting operators 
+            List<Product> products = ProductsList.Where((P) => P.ProductID > 50).ToList();
+
+            Dictionary<long, Product> keyValuePairs = ProductsList.Where((P) => P.UnitsInStock == 0).ToDictionary(P => P.ProductID);
+
+            foreach (var product in keyValuePairs)
+                Console.WriteLine($"Key: {product.Key}, Value:{product.Value}");
+            #endregion
+
+            #region Generation Operators 
+            var RangeResult = Enumerable.Range(1, 10);
+            var RangeResult2 = Enumerable.Range(5, 10);
+            var RepeatResult = Enumerable.Repeat(50, 100);
+            var EmptyResult = Enumerable.Empty<Product>();
+            #endregion
+
+            #region Set Operators
+            var UnionResult = RangeResult.Concat(RangeResult2).Distinct();
+
+            Console.WriteLine("==============RangeResult01====================");
+            foreach (var item in RangeResult)
+            {
+                Console.WriteLine(item);
+            }            
+            Console.WriteLine("=================RangeResult02=================");
+            foreach (var item in RangeResult2)
+            {
+                Console.WriteLine(item);
+            }
+            Console.WriteLine("=================UnionResult=================");
+            foreach (var item in UnionResult)
+            {
+                Console.WriteLine(item);
+            }
+            #endregion
+
+            #region Quantifier Operators
+            Console.WriteLine("=================Quantifier Operators=================");
+            Console.WriteLine(ProductsList.Any());
+            Console.WriteLine(ProductsList.All(P => P.ProductID > 0));
+            #endregion
+            #region Zipping Operator
+            var ZipinngResult = ProductsList.Zip(CustomersList);
+            foreach (var item in ZipinngResult)
+            {
+                Console.WriteLine(item);
+            }
+            #endregion
+
+            #region Grouping Operators 
+            var GroupByResult = from P in ProductsList
+                                group P by P.Category;
+            
+            Console.WriteLine($"===> GroupByResult Count: {GroupByResult.ElementAtOrDefault(1)}");
+            foreach (var item in GroupByResult)
+            {
+                Console.WriteLine($"{item.Key}");
+                foreach (var P in item)
+                Console.WriteLine($"            {P.ProductName}");
+            }
+
+            //Fluent Syntax
+            var GroupByResultFluent = ProductsList.Where(P => P.UnitsInStock > 0)
+                                                  .GroupBy(P => P.Category)
+                                                  .Where(G => G.Count() > 10)
+                                                  .Select(G => new
+                                                  {
+                                                      ProductCategory = G.Key,
+                                                      ProductsCount = G.Count(),
+                                                  });
+            //Query syntax
+            GroupByResultFluent = from P in ProductsList
+                                  group P by P.Category
+                                  into Category
+                                  where Category.Count() > 10
+                                  select new
+                                  {
+                                      ProductCategory = Category.Key,
+                                      ProductsCount = Category.Count(),
+                                  };
+            foreach (var item in GroupByResultFluent)
+            {
+                Console.WriteLine(item);
+            }
+            #endregion
+
+            #region Partitioning Operators
+            var PartitioningResult = ProductsList.Take(10);
+            PartitioningResult = ProductsList.TakeLast(10);
+            PartitioningResult = ProductsList.Skip(10);
+            PartitioningResult = ProductsList.SkipLast(10);
+            PartitioningResult = ProductsList.TakeWhile(P => P.ProductID > 0);
+            PartitioningResult = ProductsList.SkipWhile(P => P.ProductID > 0);
+            foreach (var item in PartitioningResult)
+            {
+                Console.WriteLine(item);
+            }
+            #endregion
+            #region Let and Into
+            List<string> XNames = new List<string>() { "X1", "X2", "X3", "X4", "x5" };
+
+            var IntoResult = from name in XNames
+                             select Regex.Replace(name, "[Xx]", string.Empty)
+                             into YNames
+                             where YNames.Length == 1
+                             select YNames;
+
+            IntoResult = from name in XNames
+                             let Ynames = Regex.Replace(name, "[Xx]", string.Empty)
+                             where Ynames.Length == 1
+                             select Ynames;
+            Console.WriteLine("========================================================================");
+            foreach (var item in IntoResult)
+            {
+                Console.WriteLine(item);
+            }
             #endregion
         }
     }
