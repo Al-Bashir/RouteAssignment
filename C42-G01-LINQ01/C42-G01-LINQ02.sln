@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35027.167
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C42-G01-LINQ01", "C42-G01-LINQ01\C42-G01-LINQ01.csproj", "{2665B8A7-7B8F-4D6D-89BD-530CC5AD2CBA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "C42-G01-LINQ02", "C42-G01-LINQ01\C42-G01-LINQ02.csproj", "{2665B8A7-7B8F-4D6D-89BD-530CC5AD2CBA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

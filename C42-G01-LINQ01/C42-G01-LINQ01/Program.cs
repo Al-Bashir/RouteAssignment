@@ -42,18 +42,18 @@ namespace C42_G01_LINQ01
             #region LINQ - Element Operators
             //1. Get first Product out of Stock 
             Console.WriteLine("----> Get first Product out of Stock ");
-            var Result10 = ProductsList.Where(P => P.UnitsInStock == 0).ElementAtOrDefault(0);
+            var Result10 = ProductsList.FirstOrDefault(P => P.UnitsInStock == 0);
             Console.WriteLine(Result10);
 
             //2. Return the first product whose Price > 1000, unless there is no match, in which case null is returned.
             Console.WriteLine("---->  Return the first product whose Price > 1000, unless there is no match, in which case null is returned.");
-            var Result11 = ProductsList.Where(P => P.UnitPrice > 1000).ElementAtOrDefault(0);
+            var Result11 = ProductsList.FirstOrDefault(P => P.UnitPrice > 1000);
             Console.WriteLine(Result11);
 
             //3. Retrieve the second number greater than 5 
             int[] ArrInt = { 5, 4, 1, 3, 9, 8, 6, 7, 2, 0 };
             Console.WriteLine("---->  3. Retrieve the second number greater than 5 ");
-            var Result12 = ArrInt.Where(P => P > 5).ElementAtOrDefault(0);
+            var Result12 = ArrInt.Where(P => P > 5).ElementAtOrDefault(1);
             Console.WriteLine(Result12);
 
             #endregion
@@ -62,7 +62,7 @@ namespace C42_G01_LINQ01
             //1. Uses Count to get the number of odd numbers in the array
             int[] AggregateArr = { 5, 4, 1, 3, 9, 8, 6, 7, 2, 0 };
             Console.WriteLine("---->  Uses Count to get the number of odd numbers in the array");
-            var Result20 = AggregateArr.Where(P => P % 2 != 0).Count();
+            var Result20 = AggregateArr.Count(P => P % 2 != 0);
             Console.WriteLine(Result20);
 
             //2. Return a list of customers and how many orders each has.
@@ -95,7 +95,7 @@ namespace C42_G01_LINQ01
             //4. Get the total of the numbers in an array.
             Console.WriteLine("---->  4. Get the total of the numbers in an array.");
             int[] ArrResult23 = { 5, 4, 1, 3, 9, 8, 6, 7, 2, 0 };
-            var Result23 = ArrResult23.Sum(P => P);
+            var Result23 = ArrResult23.Sum();
             Console.WriteLine($"Sum: {Result23}");
 
             //5. Get the total number of characters of all words in dictionary_english.txt (Read dictionary_english.txt into Array of String First).
@@ -268,7 +268,7 @@ namespace C42_G01_LINQ01
             //7. Sort first by-word length and then by a case-insensitive descending sort of the words in an array.
             Console.WriteLine("----> 7. Sort first by-word length and then by a case-insensitive descending sort of the words in an array.");
             string[] Arr36 = { "aPPLE", "AbAcUs", "bRaNcH", "BlUeBeRrY", "ClOvEr", "cHeRry" };
-            var Result36 = Arr36.OrderByDescending(P => P.Length).ThenByDescending(P => P, StringComparer.OrdinalIgnoreCase);
+            var Result36 = Arr36.OrderBy(P => P.Length).ThenByDescending(P => P, StringComparer.OrdinalIgnoreCase);
             foreach (var item in Result34)
             {
                 Console.WriteLine(item);
@@ -445,7 +445,7 @@ namespace C42_G01_LINQ01
             //3. Return elements starting from the beginning of the array until a number is hit that is less than its position in the array.
             Console.WriteLine("-------> 3. Return elements starting from the beginning of the array until a number is hit that is less than its position in the array.");
             int[] Arr56 = { 1, 5, 4, 1, 3, 9, 8, 6, 7, 2, 0 };
-            var Result56 = Arr56.TakeWhile((E, I) => E < I);
+            var Result56 = Arr56.TakeWhile((E, I) => E >= I);
 
             foreach (var item in Result56)
             {
@@ -455,7 +455,7 @@ namespace C42_G01_LINQ01
             //4.Get the elements of the array starting from the first element divisible by 3.
             Console.WriteLine("-------> 4.Get the elements of the array starting from the first element divisible by 3.");
             int[] Arr57 = {5, 4, 1, 3, 9, 8, 6, 7, 2, 0 };
-            var Result57 = Arr57.SkipWhile(E => (E % 3) == 0);
+            var Result57 = Arr57.SkipWhile(E => (E % 3) != 0);
             foreach (var item in Result57)
             {
                 Console.WriteLine(item);
@@ -464,7 +464,7 @@ namespace C42_G01_LINQ01
             //5. Get the elements of the array starting from the first element less than its position.
             Console.WriteLine("-------> 5. Get the elements of the array starting from the first element less than its position.");
             int[] Arr58 = { 5, 4, 1, 3, 9, 8, 6, 7, 2, 0 };
-            var Result58 = Arr58.SkipWhile((E, I) => E < I);
+            var Result58 = Arr58.SkipWhile((E, I) => E >= I);
             foreach (var item in Result58)
             {
                 Console.WriteLine(item);
@@ -530,13 +530,15 @@ namespace C42_G01_LINQ01
 
             //3. Use Group By with a custom comparer that matches words that are consists of the same Characters Together
             Console.WriteLine("-------> 3. Use Group By with a custom comparer that matches words that are consists of the same Characters Together");
-            string[] Arr72 = { "from", "salt", "earn", "last", "near", "form" };
-            var Result72 = Arr72.GroupBy(E => E.ToCharArray());
+            string[] Arr72 = { "from", "salt", "earn", " last", "near", "form" };
+            var Result72 = Arr72.GroupBy(E => E.Trim(), new EqualityComparer());
 
             foreach (var item in Result72)
             {
                 foreach (var p in item)
                     Console.WriteLine(p);
+
+                Console.WriteLine("---------------");
             }
             #endregion
         }
