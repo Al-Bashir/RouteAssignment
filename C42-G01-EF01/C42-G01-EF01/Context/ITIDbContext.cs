@@ -17,6 +17,7 @@ namespace C42_G01_EF01.Context
         public DbSet<Topic> Topics { get; set; }
         public DbSet<Department> Departments { get; set; }
         public DbSet<Instructor> Instructores { get; set; }
+        public DbSet<CourseInstructor> CourseInstructors { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -26,6 +27,7 @@ namespace C42_G01_EF01.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new DepartmentConfiguration());
+            modelBuilder.ApplyConfiguration(new CoureseInstructorConfiguration());
 
             base.OnModelCreating(modelBuilder);
         }
