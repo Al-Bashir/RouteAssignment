@@ -18,6 +18,7 @@ namespace C42_G01_EF01.Context
         public DbSet<Department> Departments { get; set; }
         public DbSet<Instructor> Instructores { get; set; }
         public DbSet<CourseInstructor> CourseInstructors { get; set; }
+        public DbSet<StudentCourse> StudentCourses { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -28,7 +29,7 @@ namespace C42_G01_EF01.Context
         {
             modelBuilder.ApplyConfiguration(new DepartmentConfiguration());
             modelBuilder.ApplyConfiguration(new CoureseInstructorConfiguration());
-
+            modelBuilder.Entity<StudentCourse>().HasKey(x => new {x.StudentId, x.CourseId });
             base.OnModelCreating(modelBuilder);
         }
     }

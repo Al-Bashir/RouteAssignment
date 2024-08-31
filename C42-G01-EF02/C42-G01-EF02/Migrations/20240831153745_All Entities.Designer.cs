@@ -4,6 +4,7 @@ using C42_G01_EF01.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace C42_G01_EF01.Migrations
 {
     [DbContext(typeof(ITIDbContext))]
-    partial class ITIDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240831153745_All Entities")]
+    partial class AllEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,6 +52,8 @@ namespace C42_G01_EF01.Migrations
 
                     b.HasKey("AnyThing");
 
+                    b.HasIndex("TopicId");
+
                     b.ToTable("Courses");
                 });
 
@@ -66,6 +70,8 @@ namespace C42_G01_EF01.Migrations
 
                     b.HasKey("CourseId", "InstructorId");
 
+                    b.HasIndex("InstructorId");
+
                     b.ToTable("CourseInstructors");
                 });
 
@@ -80,7 +86,7 @@ namespace C42_G01_EF01.Migrations
                     b.Property<DateTime>("HiringDate")
                         .HasColumnType("DATE");
 
-                    b.Property<int>("InsId")
+                    b.Property<int?>("MangerId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -90,6 +96,10 @@ namespace C42_G01_EF01.Migrations
                         .HasColumnName("DName");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("MangerId")
+                        .IsUnique()
+                        .HasFilter("[MangerId] IS NOT NULL");
 
                     b.ToTable("Departments");
                 });
@@ -106,6 +116,9 @@ namespace C42_G01_EF01.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("DepartmentId")
+                        .HasColumnType("int");
+
                     b.Property<int>("DeptId")
                         .HasColumnType("int");
 
@@ -120,6 +133,8 @@ namespace C42_G01_EF01.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DepartmentId");
 
                     b.ToTable("Instructores");
                 });
@@ -152,6 +167,8 @@ namespace C42_G01_EF01.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("DeptId");
+
                     b.ToTable("Students");
                 });
 
@@ -170,6 +187,88 @@ namespace C42_G01_EF01.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Topics");
+                });
+
+            modelBuilder.Entity("C42_G01_EF01.Entities.Course", b =>
+                {
+                    b.HasOne("C42_G01_EF01.Entities.Topic", "Topic")
+                        .WithMany("Coureses")
+                        .HasForeignKey("TopicId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Topic");
+                });
+
+            modelBuilder.Entity("C42_G01_EF01.Entities.CourseInstructor", b =>
+                {
+                    b.HasOne("C42_G01_EF01.Entities.Course", "Course")
+                        .WithMany("CourseInstructors")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("C42_G01_EF01.Entities.Instructor", "Instructor")
+                        .WithMany("InstructorCourses")
+                        .HasForeignKey("InstructorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("Instructor");
+                });
+
+            modelBuilder.Entity("C42_G01_EF01.Entities.Department", b =>
+                {
+                    b.HasOne("C42_G01_EF01.Entities.Instructor", "Instructor")
+                        .WithOne("Department")
+                        .HasForeignKey("C42_G01_EF01.Entities.Department", "MangerId");
+
+                    b.Navigation("Instructor");
+                });
+
+            modelBuilder.Entity("C42_G01_EF01.Entities.Instructor", b =>
+                {
+                    b.HasOne("C42_G01_EF01.Entities.Department", null)
+                        .WithMany("Instructors")
+                        .HasForeignKey("DepartmentId");
+                });
+
+            modelBuilder.Entity("C42_G01_EF01.Entities.Student", b =>
+                {
+                    b.HasOne("C42_G01_EF01.Entities.Department", "Department")
+                        .WithMany("Students")
+                        .HasForeignKey("DeptId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Department");
+                });
+
+            modelBuilder.Entity("C42_G01_EF01.Entities.Course", b =>
+                {
+                    b.Navigation("CourseInstructors");
+                });
+
+            modelBuilder.Entity("C42_G01_EF01.Entities.Department", b =>
+                {
+                    b.Navigation("Instructors");
+
+                    b.Navigation("Students");
+                });
+
+            modelBuilder.Entity("C42_G01_EF01.Entities.Instructor", b =>
+                {
+                    b.Navigation("Department")
+                        .IsRequired();
+
+                    b.Navigation("InstructorCourses");
+                });
+
+            modelBuilder.Entity("C42_G01_EF01.Entities.Topic", b =>
+                {
+                    b.Navigation("Coureses");
                 });
 #pragma warning restore 612, 618
         }

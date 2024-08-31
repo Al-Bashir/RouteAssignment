@@ -20,5 +20,7 @@ namespace C42_G01_EF01.Entities
         public string Duration { get; set; }
         [ForeignKey("Topic")]
         public int TopicId { get; set; }
+        public Topic Topic { get; set; }
+        public ICollection<CourseInstructor> CourseInstructors { get; set; } = new HashSet<CourseInstructor>();
     }
 }

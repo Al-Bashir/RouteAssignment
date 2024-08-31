@@ -14,6 +14,10 @@ namespace C42_G01_EF01.Configuration
     {
         public void Configure(EntityTypeBuilder<Department> builder)
         {
+            builder.HasOne(D => D.Instructor)
+                .WithOne(I => I.Department)
+                .HasForeignKey<Department>(D => D.MangerId); ;
+
             builder.HasKey(D => D.Id);
 
             builder.Property(D => D.Id)
@@ -26,8 +30,8 @@ namespace C42_G01_EF01.Configuration
                 .HasMaxLength(25);
 
             
-            builder.Property(D => D.InsId)
-                .IsRequired();
+            builder.Property(D => D.MangerId)
+                .IsRequired(false);
 
             builder.Property(D => D.HiringDate)
                 .HasColumnType("DATE");
