@@ -1,6 +1,7 @@
 ﻿using C42_G01_EF02_Demo.Classes;
 using C42_G01_EF02_Demo.Configuration;
 using C42_G01_EF02_Demo.Entities;
+using C42_G01_EF04_Demo.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,7 @@ namespace C42_G01_EF02_Demo.Context
         public DbSet<Department> Departments { get; set; }
         public DbSet<Student> Students { get; set; }
         public DbSet<Course> Courses { get; set; }
+        public DbSet<EmpWithDept> EmpWithDept { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer("Server = .; Database = EnterpriseDB; Trusted_Connection = true");
@@ -42,6 +44,8 @@ namespace C42_G01_EF02_Demo.Context
             .HasMany(C => C.StudentCourses)
             .WithOne(SC => SC.Course)
             .IsRequired();
+
+            modelBuilder.Entity<EmpWithDept>().ToView("EmpWithDept");
 
             //modelBuilder.ApplyConfiguration(new ProductConfiguration());
 

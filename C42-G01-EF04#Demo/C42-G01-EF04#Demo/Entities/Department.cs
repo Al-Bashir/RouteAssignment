@@ -10,7 +10,7 @@ namespace C42_G01_EF02_Demo.Entities
     internal class Department
     {
         public int DeptId { get; set; }
-        public int DeptName { get; set; }
+        public string DeptName { get; set; }
 
         public DateTime DOC { get; set; }
         public ICollection<Empolyee> Empolyees { get; set; } = new HashSet<Empolyee>();
