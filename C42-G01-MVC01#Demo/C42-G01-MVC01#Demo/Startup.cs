@@ -27,18 +27,21 @@ namespace C42_G01_MVC01_Demo
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseStaticFiles();
+
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllerRoute(
+                    name: "MyAction",
+                    pattern: "/{Controller}/{action}/{id:int?}");
+
                 endpoints.MapGet("/", async context =>
                 {
                     await context.Response.WriteAsync("Hello World!");
                 });
 
-                endpoints.MapControllerRoute(
-                    name: "MyAction",
-                    pattern: "/{Controller=Movies}/{action=Index}/{id:int?}");
             });
         }
     }

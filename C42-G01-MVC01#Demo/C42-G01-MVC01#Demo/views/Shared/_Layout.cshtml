@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link href="~/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <title>@ViewBag.Title</title>
+</head>
+<body>
+    <header class="mt-5">
+        <nav>
+            <Center>
+                <a class="btn btn-primary" asp-controller="Home" asp-action="Index">Home</a>
+                <a class="btn btn-secondary" asp-controller="Home" asp-action="AboutUs">AboutUs</a>
+                <a class="btn btn-success" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                <a class="btn btn-warning" asp-controller="Home" asp-action="ContactUs">ContactUs</a>
+
+                <a class="btn btn-danger" asp-controller="Account" asp-action="Login">Login</a>
+                <a class="btn btn-info" asp-controller="Account" asp-action="SingUp">SignUp</a>
+            </Center>
+        </nav>
+    </header>
+
+    <div>
+        @RenderBody()
+    </div>
+
+    <footer>
+        <center>
+            <div class="mt-5">
+                <p> All Rights Reserved &copy;Al-Bashir @DateTime.Now.Year</p>
+            </div>
+        </center>
+    </footer>
+</body>
+</html>
