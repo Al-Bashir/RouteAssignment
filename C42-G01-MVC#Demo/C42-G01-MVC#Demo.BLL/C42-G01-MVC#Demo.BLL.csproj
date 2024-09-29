@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>C42_G01_MVC_Demo.BLL</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\C42-G01-MVC#Demo.DAL\C42-G01-MVC#Demo.DAL.csproj" />
+    <ProjectReference Include="..\C42-G01-MVC#Demo.DL\C42-G01-MVC#Demo.DAL.csproj" />
+  </ItemGroup>
+
+</Project>
