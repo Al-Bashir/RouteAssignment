@@ -27,7 +27,11 @@ namespace C42_G01_MVC01_Demo.PL.Controllers
         {
             if (ModelState.IsValid)
             {
-                _departmentRepository.Add(department);
+                int result = _departmentRepository.Add(department);
+                if (result > 0) 
+                {
+                    TempData["Message"] = "The Department Is Added Successfully";
+                }
                 return RedirectToAction(nameof(Index));
             }
             else 
@@ -65,7 +69,11 @@ namespace C42_G01_MVC01_Demo.PL.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    _departmentRepository.Update(department);
+                    int result = _departmentRepository.Update(department);
+                    if (result > 0)
+                    {
+                        TempData["Message"] = "The Department Is Updated Successfully";
+                    }
                     return RedirectToAction(nameof(Index));
                 }
             }

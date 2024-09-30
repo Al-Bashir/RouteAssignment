@@ -4,14 +4,16 @@ using C42_G01_MVC_Demo.DL.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace C42_G01_MVC_Demo.DAL.Migrations
 {
     [DbContext(typeof(MVCProjectDbContext))]
-    partial class MVCProjectDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240930142416_UpdateEmployeeDepartmentRelationship")]
+    partial class UpdateEmployeeDepartmentRelationship
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

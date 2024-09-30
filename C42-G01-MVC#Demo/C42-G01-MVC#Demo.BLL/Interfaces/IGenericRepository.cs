@@ -7,8 +7,12 @@ using System.Threading.Tasks;
 
 namespace C42_G01_MVC_Demo.BLL.Interfaces
 {
-    public interface IDepartmentRepository : IGenericRepository<Department>
+    public interface IGenericRepository <T>
     {
-
+        IEnumerable<T> GetAll();
+        T GetById(int id);
+        int Add(T entity);
+        int Update(T entity);
+        int Delete(T entity);
     }
 }

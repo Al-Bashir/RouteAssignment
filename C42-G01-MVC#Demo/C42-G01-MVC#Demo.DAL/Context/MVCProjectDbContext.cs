@@ -1,4 +1,5 @@
-﻿using C42_G01_MVC_Demo.DL.Models;
+﻿using C42_G01_MVC_Demo.DAL.Models;
+using C42_G01_MVC_Demo.DL.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -20,5 +21,6 @@ namespace C42_G01_MVC_Demo.DL.Context
 
 
         public DbSet<Department> Departments { get; set; }
+        public DbSet<Employee> Employees { get; set; }
     }
 }

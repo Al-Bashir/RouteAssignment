@@ -32,6 +32,7 @@ namespace C42_G01_MVC01_Demo.PL
                     Options => Options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
                 );
             services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+            services.AddScoped<IEmpolyeeRepository, EmpployeeRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

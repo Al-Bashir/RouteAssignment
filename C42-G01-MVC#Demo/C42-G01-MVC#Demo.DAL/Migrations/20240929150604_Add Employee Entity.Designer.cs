@@ -4,14 +4,16 @@ using C42_G01_MVC_Demo.DL.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace C42_G01_MVC_Demo.DAL.Migrations
 {
     [DbContext(typeof(MVCProjectDbContext))]
-    partial class MVCProjectDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240929150604_Add Employee Entity")]
+    partial class AddEmployeeEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,9 +37,6 @@ namespace C42_G01_MVC_Demo.DAL.Migrations
                     b.Property<DateTime>("DateOfCreation")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DepartmentId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
@@ -59,8 +58,6 @@ namespace C42_G01_MVC_Demo.DAL.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("DepartmentId");
 
                     b.ToTable("Employees");
                 });
@@ -87,20 +84,6 @@ namespace C42_G01_MVC_Demo.DAL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Departments");
-                });
-
-            modelBuilder.Entity("C42_G01_MVC_Demo.DAL.Models.Employee", b =>
-                {
-                    b.HasOne("C42_G01_MVC_Demo.DL.Models.Department", "Department")
-                        .WithMany("Employees")
-                        .HasForeignKey("DepartmentId");
-
-                    b.Navigation("Department");
-                });
-
-            modelBuilder.Entity("C42_G01_MVC_Demo.DL.Models.Department", b =>
-                {
-                    b.Navigation("Employees");
                 });
 #pragma warning restore 612, 618
         }
