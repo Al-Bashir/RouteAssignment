@@ -1,6 +1,7 @@
 ﻿using C42_G01_MVC_Demo.BLL.Interfaces;
 using C42_G01_MVC_Demo.DAL.Models;
 using C42_G01_MVC_Demo.DL.Context;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +25,7 @@ namespace C42_G01_MVC_Demo.BLL.Repositories
 
         public IQueryable<Employee> GetEmployeesByName(string name)
         {
-            return _dbContext.Employees.Where(E => E.Name.Contains(name));
+            return _dbContext.Employees.Include(E => E.Department).Where(E => E.Name.ToLower().Contains(name.ToLower()));
         }
     }
 }

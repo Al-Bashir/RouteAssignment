@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using C42_G01_MVC01_Demo.PL.MappingProfiles;
 
 namespace C42_G01_MVC01_Demo.PL
 {
@@ -31,8 +32,8 @@ namespace C42_G01_MVC01_Demo.PL
             services.AddDbContext<MVCProjectDbContext>(
                     Options => Options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
                 );
-            services.AddScoped<IDepartmentRepository, DepartmentRepository>();
-            services.AddScoped<IEmpolyeeRepository, EmpployeeRepository>();
+            services.AddAutoMapper(C => C.AddProfile(new EmployeeProfile()));
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

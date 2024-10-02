@@ -7,15 +7,15 @@ namespace C42_G01_MVC01_Demo.PL.Controllers
 {
     public class DepartmentController : Controller
     {
-        private readonly IDepartmentRepository _departmentRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public DepartmentController(IDepartmentRepository departmentRepository)
+        public DepartmentController(IUnitOfWork unitOfWork)
         {
-            _departmentRepository = departmentRepository;
+            _unitOfWork = unitOfWork;
         }
         public IActionResult Index()
         {
-            var departments = _departmentRepository.GetAll();
+            var departments = _unitOfWork.DepartmentRepository.GetAll();
             return View(departments);
         }
         public IActionResult Create() 
@@ -27,7 +27,8 @@ namespace C42_G01_MVC01_Demo.PL.Controllers
         {
             if (ModelState.IsValid)
             {
-                int result = _departmentRepository.Add(department);
+                _unitOfWork.DepartmentRepository.Add(department);
+                int result = _unitOfWork.Complete();
                 if (result > 0) 
                 {
                     TempData["Message"] = "The Department Is Added Successfully";
@@ -45,7 +46,7 @@ namespace C42_G01_MVC01_Demo.PL.Controllers
             { 
                 return BadRequest();
             }
-            var department = _departmentRepository.GetById(id.Value);
+            var department = _unitOfWork.DepartmentRepository.GetById(id.Value);
             if(department is null)
             { 
                 return NotFound();
@@ -69,7 +70,8 @@ namespace C42_G01_MVC01_Demo.PL.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    int result = _departmentRepository.Update(department);
+                    _unitOfWork.DepartmentRepository.Update(department);
+                    int result = _unitOfWork.Complete();
                     if (result > 0)
                     {
                         TempData["Message"] = "The Department Is Updated Successfully";
@@ -101,7 +103,8 @@ namespace C42_G01_MVC01_Demo.PL.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    _departmentRepository.Delete(department);
+                    _unitOfWork.DepartmentRepository.Delete(department);
+                    _unitOfWork.Complete();
                     return RedirectToAction(nameof(Index));
                 }
             }
