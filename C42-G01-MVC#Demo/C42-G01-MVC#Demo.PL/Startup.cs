@@ -13,6 +13,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using C42_G01_MVC01_Demo.PL.MappingProfiles;
+using Microsoft.AspNetCore.Identity;
+using C42_G01_MVC_Demo.DAL.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace C42_G01_MVC01_Demo.PL
 {
@@ -34,6 +37,20 @@ namespace C42_G01_MVC01_Demo.PL
                 );
             services.AddAutoMapper(C => C.AddProfile(new EmployeeProfile()));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddIdentity<ApplicationUser, IdentityRole>(Options =>
+            {
+                Options.Password.RequireNonAlphanumeric = true;
+                Options.Password.RequireDigit = true;
+                Options.Password.RequireLowercase = true;
+                Options.Password.RequireUppercase = true;
+                })
+                .AddEntityFrameworkStores<MVCProjectDbContext>()
+                .AddDefaultTokenProviders();
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(Options => 
+            {
+                Options.LoginPath = "Auth/Login";
+                Options.AccessDeniedPath = "Auth/Login";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -54,13 +71,15 @@ namespace C42_G01_MVC01_Demo.PL
 
             app.UseRouting();
 
+            app.UseAuthentication();
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    name: "default", 
+                    pattern: "{controller=Auth}/{action=Login}");
             });
         }
     }

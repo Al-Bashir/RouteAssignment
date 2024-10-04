@@ -1,12 +1,14 @@
 ﻿@model EmployeeViewModel
 
 <div class="form-group">
-    <label class="col-form-label" asp-for="Name"></label>
-    <input readonly class="form-control" asp-for="Name" />
+    <center>
+        <img src="~/Files/Images/@Model.ImageFileName" class="rounded" width="100px" height="100px"/>
+        <input asp-for="ImageFileName" hidden />
+    </center>
 </div>
 <div class="form-group">
-    <label class="col-form-label" asp-for="ImageFileName"></label>
-    <input readonly class="form-control" asp-for="ImageFileName" />
+    <label class="col-form-label" asp-for="Name"></label>
+    <input readonly class="form-control" asp-for="Name" />
 </div>
 <div class="form-group">
     <label class="col-form-label" asp-for="Department"></label>

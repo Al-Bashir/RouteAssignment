@@ -3,14 +3,17 @@ using C42_G01_MVC_Demo.BLL.Interfaces;
 using C42_G01_MVC_Demo.DAL.Models;
 using C42_G01_MVC01_Demo.PL.Helpers;
 using C42_G01_MVC01_Demo.PL.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Reflection.Metadata;
+using System.Threading.Tasks;
 
 namespace C42_G01_MVC01_Demo.PL.Controllers
 {
+    [Authorize]
     public class EmployeeController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -21,9 +24,9 @@ namespace C42_G01_MVC01_Demo.PL.Controllers
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var Employees = _unitOfWork.EmployeeRepository.GetAll();
+            var Employees = await _unitOfWork.EmployeeRepository.GetAllAsync();
             var MappedEmployees = _mapper.Map<IEnumerable<Employee>, IEnumerable<EmployeeViewModel>>(Employees);
             return View(MappedEmployees);
         }
@@ -40,14 +43,14 @@ namespace C42_G01_MVC01_Demo.PL.Controllers
             return View(MappedResult);
         }
         [HttpGet]
-        public IActionResult Create() 
+        public async Task<IActionResult> Create() 
         {
-            ViewBag.Departments = _unitOfWork.DepartmentRepository.GetAll(); 
+            ViewBag.Departments = await _unitOfWork.DepartmentRepository.GetAllAsync(); 
             return View();
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(EmployeeViewModel employeeVM) 
+        public async Task<IActionResult> Create(EmployeeViewModel employeeVM) 
         {
             if (employeeVM is null) 
             {
@@ -57,8 +60,8 @@ namespace C42_G01_MVC01_Demo.PL.Controllers
             {
                 employeeVM.ImageFileName = DocumentSettings.UploadFile(employeeVM.Image, "Images");
                 var Employee = _mapper.Map<EmployeeViewModel, Employee>(employeeVM);
-                _unitOfWork.EmployeeRepository.Add(Employee);
-                int result = _unitOfWork.Complete();
+                await _unitOfWork.EmployeeRepository.AddAsync(Employee);
+                int result = await _unitOfWork.CompleteAsync();
                 if (result > 0)
                 {
                     TempData["Message"] = "The Employee Is Added Successfully";
@@ -70,13 +73,13 @@ namespace C42_G01_MVC01_Demo.PL.Controllers
                 return View(nameof(Create), employeeVM);
             }
         }
-        public IActionResult Details(int? id, string ViewName = "Details") 
+        public async Task<IActionResult> Details(int? id, string ViewName = "Details") 
         {
             if (id is null) 
             {
                 return BadRequest();
             }
-            var Employee = _unitOfWork.EmployeeRepository.GetById(id.Value);
+            var Employee = await _unitOfWork.EmployeeRepository.GetByIdAsync(id.Value);
             if (Employee is null) 
             {
                 return NotFound();
@@ -84,14 +87,14 @@ namespace C42_G01_MVC01_Demo.PL.Controllers
             var EmployeeVM = _mapper.Map<Employee, EmployeeViewModel>(Employee);
             return View(ViewName, EmployeeVM);
         }
-        public IActionResult Edit(int id) 
+        public async Task<IActionResult> Edit(int id) 
         {
-            ViewBag.Departments = _unitOfWork.DepartmentRepository.GetAll();
-            return Details(id, nameof(Edit));
+            ViewBag.Departments = await _unitOfWork.DepartmentRepository.GetAllAsync();
+            return await Details(id, nameof(Edit));
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(EmployeeViewModel employeeVM, [FromRoute] int id) 
+        public async Task<IActionResult> Edit(EmployeeViewModel employeeVM, [FromRoute] int id) 
         {
             if (employeeVM.Id != id)
             {
@@ -101,13 +104,25 @@ namespace C42_G01_MVC01_Demo.PL.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    employeeVM.ImageFileName = DocumentSettings.UploadFile(employeeVM.Image, "Images");
+                    var OldImageFileName = employeeVM.ImageFileName;
+                    if (employeeVM.Image is not null)
+                    {
+                        employeeVM.ImageFileName = DocumentSettings.UploadFile(employeeVM.Image, "Images");
+                    }
+                    else {
+                        employeeVM.ImageFileName = OldImageFileName;
+                        OldImageFileName = null;
+                    }
                     var employee = _mapper.Map<EmployeeViewModel, Employee>(employeeVM);
                     _unitOfWork.EmployeeRepository.Update(employee);
-                    int result = _unitOfWork.Complete();
+                    int result = await _unitOfWork.CompleteAsync();
                     if (result > 0)
                     {
                         TempData["Message"] = "The Employee Is Updated Successfully";
+                        if (OldImageFileName is not null)
+                        { 
+                            DocumentSettings.RemoveFile(OldImageFileName, "Images");
+                        }
                     }
                     return RedirectToAction(nameof(Index));
                 }
@@ -119,13 +134,13 @@ namespace C42_G01_MVC01_Demo.PL.Controllers
             }
             return View(employeeVM);
         }
-        public IActionResult Delete(int id) 
+        public async Task<IActionResult> Delete(int id) 
         {
-            return Details(id, nameof(Delete));
+            return await Details(id, nameof(Delete));
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete(EmployeeViewModel employeeVM, [FromRoute] int? id) 
+        public async Task<IActionResult> Delete(EmployeeViewModel employeeVM, [FromRoute] int? id) 
         {
             if (employeeVM.Id != id) 
             {
@@ -136,9 +151,12 @@ namespace C42_G01_MVC01_Demo.PL.Controllers
                 if (ModelState.IsValid) 
                 {
                     var employee = _mapper.Map<EmployeeViewModel, Employee>(employeeVM);
-                    DocumentSettings.RemoveFile(employee.ImageFileName, "Images");
                     _unitOfWork.EmployeeRepository.Delete(employee);
-                    _unitOfWork.Complete();
+                    var result =await _unitOfWork.CompleteAsync();
+                    if (result > 0 && employee.ImageFileName is not null) 
+                    {
+                        DocumentSettings.RemoveFile(employee.ImageFileName, "Images");
+                    }
                     return RedirectToAction(nameof(Index));
                 }
             }

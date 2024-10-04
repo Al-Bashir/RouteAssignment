@@ -1,6 +1,7 @@
 ﻿using C42_G01_MVC_Demo.BLL.Interfaces;
 using C42_G01_MVC_Demo.DL.Context;
 using System;
+using System.Threading.Tasks;
 
 namespace C42_G01_MVC_Demo.BLL.Repositories
 {
@@ -17,9 +18,9 @@ namespace C42_G01_MVC_Demo.BLL.Repositories
             _dbContext = dbContext;
         }
 
-        public int Complete()
+        public async Task<int> CompleteAsync()
         {
-            return _dbContext.SaveChanges();
+            return await _dbContext.SaveChangesAsync();
         }
 
         public void Dispose()

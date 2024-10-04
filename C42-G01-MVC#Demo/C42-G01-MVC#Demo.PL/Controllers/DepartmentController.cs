@@ -1,10 +1,13 @@
 ﻿using C42_G01_MVC_Demo.BLL.Interfaces;
 using C42_G01_MVC_Demo.BLL.Repositories;
 using C42_G01_MVC_Demo.DL.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace C42_G01_MVC01_Demo.PL.Controllers
 {
+    [Authorize]
     public class DepartmentController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -13,9 +16,9 @@ namespace C42_G01_MVC01_Demo.PL.Controllers
         {
             _unitOfWork = unitOfWork;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var departments = _unitOfWork.DepartmentRepository.GetAll();
+            var departments =await _unitOfWork.DepartmentRepository.GetAllAsync();
             return View(departments);
         }
         public IActionResult Create() 
@@ -23,12 +26,12 @@ namespace C42_G01_MVC01_Demo.PL.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Create(Department department)
+        public async Task<IActionResult> Create(Department department)
         {
             if (ModelState.IsValid)
             {
-                _unitOfWork.DepartmentRepository.Add(department);
-                int result = _unitOfWork.Complete();
+                await _unitOfWork.DepartmentRepository.AddAsync(department);
+                int result = await _unitOfWork.CompleteAsync();
                 if (result > 0) 
                 {
                     TempData["Message"] = "The Department Is Added Successfully";
@@ -40,13 +43,13 @@ namespace C42_G01_MVC01_Demo.PL.Controllers
                 return View(department);
             }
         }
-        public IActionResult Details(int? id, string viewName = "Details") 
+        public async Task<IActionResult> Details(int? id, string viewName = "Details") 
         {
             if (id is null)
             { 
                 return BadRequest();
             }
-            var department = _unitOfWork.DepartmentRepository.GetById(id.Value);
+            var department = await _unitOfWork.DepartmentRepository.GetByIdAsync(id.Value);
             if(department is null)
             { 
                 return NotFound();
@@ -54,13 +57,13 @@ namespace C42_G01_MVC01_Demo.PL.Controllers
             return View(viewName, department);
         }
         [HttpGet]
-        public IActionResult Edit(int? id) 
+        public async Task<IActionResult> Edit(int? id) 
         {
-            return Details(id, "Edit");
+            return await Details(id, "Edit");
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Department department, [FromRoute] int id) 
+        public async Task<IActionResult> Edit(Department department, [FromRoute] int id) 
         {
             if (department.Id != id) 
             {
@@ -71,7 +74,7 @@ namespace C42_G01_MVC01_Demo.PL.Controllers
                 if (ModelState.IsValid)
                 {
                     _unitOfWork.DepartmentRepository.Update(department);
-                    int result = _unitOfWork.Complete();
+                    int result = await _unitOfWork.CompleteAsync();
                     if (result > 0)
                     {
                         TempData["Message"] = "The Department Is Updated Successfully";
@@ -87,13 +90,13 @@ namespace C42_G01_MVC01_Demo.PL.Controllers
             return View(department);
         }
         [HttpGet]
-        public IActionResult Delete(int? id) 
+        public async Task<IActionResult> Delete(int? id) 
         {
-            return Details(id, "Delete");
+            return await Details(id, "Delete");
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete(Department department, [FromRoute] int id)
+        public async Task<IActionResult> Delete(Department department, [FromRoute] int id)
         {
             if (department.Id != id)
             {
@@ -104,7 +107,7 @@ namespace C42_G01_MVC01_Demo.PL.Controllers
                 if (ModelState.IsValid)
                 {
                     _unitOfWork.DepartmentRepository.Delete(department);
-                    _unitOfWork.Complete();
+                    await _unitOfWork.CompleteAsync();
                     return RedirectToAction(nameof(Index));
                 }
             }
