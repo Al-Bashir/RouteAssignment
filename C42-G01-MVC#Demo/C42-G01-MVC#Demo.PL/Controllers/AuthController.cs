@@ -99,5 +99,10 @@ namespace C42_G01_MVC01_Demo.PL.Controllers
 			}
 			return View(loginViewModel);
 		}
+		public async Task<IActionResult> SignOut()
+		{
+			await _signInManager.SignOutAsync();	
+			return RedirectToAction(nameof(Login));
+		}
 	}
 }

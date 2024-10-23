@@ -16,6 +16,7 @@ using C42_G01_MVC01_Demo.PL.MappingProfiles;
 using Microsoft.AspNetCore.Identity;
 using C42_G01_MVC_Demo.DAL.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using AutoMapper;
 
 namespace C42_G01_MVC01_Demo.PL
 {
@@ -35,7 +36,7 @@ namespace C42_G01_MVC01_Demo.PL
             services.AddDbContext<MVCProjectDbContext>(
                     Options => Options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
                 );
-            services.AddAutoMapper(C => C.AddProfile(new EmployeeProfile()));
+            services.AddAutoMapper(C => C.AddProfiles(new List<Profile>() { new EmployeeProfile(), new UserProfile() }));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddIdentity<ApplicationUser, IdentityRole>(Options =>
             {

@@ -18,7 +18,7 @@
     <br />
     <form asp-action="Index" method="post">
         <div class="form-group" style="display:flex; gap: 1rem" >
-            <input type="search" name="searchforname" class="form-control" placeholder="Search" />
+            <input type="search" name="searchforname" class="form-control" placeholder="Search" required/>
             <input type="submit" value="Search" class="btn btn-success"/>
         </div>
     </form>
@@ -63,7 +63,7 @@
                             <i class="fa-solid fa-circle" style="color: red"></i>
                         }
                     </td>
-                    <partial name="_IconsPartialView" model="@employee.Id" />
+                    <partial name="_IconsPartialView" model="@employee.Id.ToString()" />
                 </tr>
             }
         </tbody>
