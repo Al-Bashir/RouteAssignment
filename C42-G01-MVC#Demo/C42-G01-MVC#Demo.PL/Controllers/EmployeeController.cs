@@ -32,13 +32,13 @@ namespace C42_G01_MVC01_Demo.PL.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Index(string searchforname) 
+        public IActionResult Index(string SearchValue) 
         {
-            if (searchforname is null)
+            if (SearchValue is null)
             {
                 return BadRequest();
             }
-            var result = _unitOfWork.EmployeeRepository.GetEmployeesByName(searchforname);
+            var result = _unitOfWork.EmployeeRepository.GetEmployeesByName(SearchValue);
             var MappedResult = _mapper.Map<IEnumerable<Employee>, IEnumerable<EmployeeViewModel>>(result);
             return View(MappedResult);
         }

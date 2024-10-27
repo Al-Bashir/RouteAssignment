@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using C42_G01_MVC_Demo.DAL.Models;
-using C42_G01_MVC_Demo.DL.Models;
 using C42_G01_MVC01_Demo.PL.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -12,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace C42_G01_MVC01_Demo.PL.Controllers
 {
-    
+    [Authorize]
     public class UserController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -58,19 +57,19 @@ namespace C42_G01_MVC01_Demo.PL.Controllers
                 return View(UserList);
             }
         }
-        
-        public async Task<IActionResult> Details(string id, string ViewName = "Details") 
+
+        public async Task<IActionResult> Details(string id, string ViewName = "Details")
         {
-            if (string.IsNullOrEmpty(id)) 
+            if (string.IsNullOrEmpty(id))
             {
                 return BadRequest();
             }
             var User = await _userManager.FindByIdAsync(id);
-            if (User == null) 
+            if (User == null)
             {
                 return NotFound();
             }
-            var MappedUser = _mapper.Map<ApplicationUser, UserViewModel>(User); 
+            var MappedUser = _mapper.Map<ApplicationUser, UserViewModel>(User);
             return View(ViewName, MappedUser);
         }
         [HttpGet]
@@ -81,26 +80,83 @@ namespace C42_G01_MVC01_Demo.PL.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(UserViewModel model, [FromRoute] string id) 
+        public async Task<IActionResult> Edit(UserViewModel model, [FromRoute] string id)
         {
-            try
+            if (model.Id != id)
             {
-                if (ModelState.IsValid)
+                return BadRequest();
+            }
+            if (ModelState.IsValid)
+            {
+                try
                 {
-                    var MappedUser = _mapper.Map<UserViewModel, ApplicationUser>(model);
-                    var result = await _userManager.UpdateAsync(MappedUser);
+                    var User = await _userManager.FindByIdAsync(model.Id);
+                    User.FName = model.FName;
+                    User.LName = model.LName;
+                    User.PhoneNumber = model.PhoneNumber;
+                    var result = await _userManager.UpdateAsync(User);
                     if (result.Succeeded)
                     {
-                        TempData["Message"] = "The Department Is Updated Successfully";
+                        TempData["Message"] = "The User Is Updated Successfully";
                         return RedirectToAction(nameof(Index));
                     }
+                    else
+                    {
+                        string errors = "";
+                        foreach (var error in result.Errors)
+                        {
+                            errors += error.Description;
+                        }
+                        ModelState.AddModelError(string.Empty, errors);
+                    }
+                }
+                catch (System.Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                }
+            }
+            return View(model);
+        }
+
+        public async Task<IActionResult> Delete(string id)
+        {
+            return await Details(id, "Delete");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(UserViewModel model, [FromRoute] string id)
+        {
+            if (model.Id != id)
+            {
+                return BadRequest();
+            }
+            try
+            {
+                var user = await _userManager.FindByIdAsync(id);
+                var result = await _userManager.DeleteAsync(user);
+                if (result.Succeeded)
+                {
+                    TempData["Message"] = "The User Is Deleted Successfully";
+                    await _userManager.UpdateSecurityStampAsync(user);
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    string errors = "";
+                    foreach (var error in result.Errors)
+                    {
+                        errors += error.Description;
+                    }
+                    ModelState.AddModelError(string.Empty, errors);
                 }
             }
             catch (System.Exception ex)
             {
+
                 ModelState.AddModelError(string.Empty, ex.Message);
             }
-            return View(nameof(Edit), id);
+            return View(model);
         }
     }
 }

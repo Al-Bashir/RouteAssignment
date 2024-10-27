@@ -36,7 +36,7 @@ namespace C42_G01_MVC01_Demo.PL
             services.AddDbContext<MVCProjectDbContext>(
                     Options => Options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
                 );
-            services.AddAutoMapper(C => C.AddProfiles(new List<Profile>() { new EmployeeProfile(), new UserProfile() }));
+            services.AddAutoMapper(C => C.AddProfiles(new List<Profile>() { new EmployeeProfile(), new UserProfile(), new IdentityRoleProfile() }));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddIdentity<ApplicationUser, IdentityRole>(Options =>
             {
@@ -49,8 +49,15 @@ namespace C42_G01_MVC01_Demo.PL
                 .AddDefaultTokenProviders();
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(Options => 
             {
-                Options.LoginPath = "Auth/Login";
-                Options.AccessDeniedPath = "Auth/Login";
+                Options.LoginPath = "/Auth/Login";
+                Options.AccessDeniedPath = "/Auth/Login";
+                Options.ForwardAuthenticate = "/Auth/Login";
+                Options.ForwardSignIn = "/Auth/Login";
+            });
+            services.Configure<SecurityStampValidatorOptions>(options =>
+            {
+                // enables immediate logout, after updating the user's stat.
+                options.ValidationInterval = TimeSpan.Zero;
             });
         }
 
@@ -80,7 +87,7 @@ namespace C42_G01_MVC01_Demo.PL
             {
                 endpoints.MapControllerRoute(
                     name: "default", 
-                    pattern: "{controller=Auth}/{action=Login}");
+                    pattern: "{controller=Auth}/{action=Login}/{id?}");
             });
         }
     }

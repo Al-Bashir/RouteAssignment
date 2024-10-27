@@ -210,7 +210,7 @@ input.email, input.text.w3lpass {
     color: #fff;
 }
 
-input[type="submit"] {
+input[type="submit"], .btn-standard {
     font-size: .9em;
     color: #fff;
     background: #76b852;
@@ -224,7 +224,7 @@ input[type="submit"] {
     letter-spacing: 4px;
 }
 
-    input[type="submit"]:hover {
+    input[type="submit"]:hover{
         -webkit-transition: .5s all;
         -moz-transition: .5s all;
         -o-transition: .5s all;
