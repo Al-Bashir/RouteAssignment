@@ -150,7 +150,7 @@ h1 {
     padding: 3em;
 }
 
-input[type="text"], input[type="email"], input[type="password"] {
+input[type="text"], input[type="email"], input[type="password"], input[type="tel"] {
     font-size: 0.9em;
     color: #fff;
     font-weight: 100;
@@ -210,7 +210,7 @@ input.email, input.text.w3lpass {
     color: #fff;
 }
 
-input[type="submit"] {
+input[type="submit"], .btn-standard {
     font-size: .9em;
     color: #fff;
     background: #76b852;
@@ -224,7 +224,7 @@ input[type="submit"] {
     letter-spacing: 4px;
 }
 
-    input[type="submit"]:hover {
+    input[type="submit"]:hover{
         -webkit-transition: .5s all;
         -moz-transition: .5s all;
         -o-transition: .5s all;
@@ -534,7 +534,7 @@ input.checkbox {
 
 /*-- responsive-design --*/
 @media(max-width:1440px) {
-    input[type="text"], input[type="email"], input[type="password"] {
+    input[type="text"], input[type="email"], input[type="password"], input[type="tel"] {
         width: 94%;
     }
 }
@@ -590,7 +590,7 @@ input.checkbox {
         width: 58%;
     }
 
-    input[type="text"], input[type="email"], input[type="password"] {
+    input[type="text"], input[type="email"], input[type="password"], input[type="tel"] {
         width: 93%;
     }
 }
@@ -652,7 +652,7 @@ input.checkbox {
         padding: 1.8em;
     }
 
-    input[type="text"], input[type="email"], input[type="password"] {
+    input[type="text"], input[type="email"], input[type="password"], input[type="tel"] {
         width: 91%;
     }
 
@@ -728,7 +728,7 @@ input.checkbox {
         margin: 0 0 1em;
     }
 
-    input[type="text"], input[type="email"], input[type="password"] {
+    input[type="text"], input[type="email"], input[type="password"], input[type="tel"] {
         width: 89.5%;
         font-size: 0.85em;
     }

@@ -14,7 +14,9 @@ namespace C42_G01_MVC01_Demo.PL.ViewModels
 		[Required(ErrorMessage = "Email Is Required")]
 		[EmailAddress(ErrorMessage = "Invalid Email Address.")]
 		public string Email { get; set; }
-		[Required(ErrorMessage = "Password Is Required")]
+		[DataType(DataType.PhoneNumber)]
+        public string PhoneNumber { get; set; }
+        [Required(ErrorMessage = "Password Is Required")]
 		[DataType(DataType.Password)]
 		public string Password { get; set; }
 		[Required(ErrorMessage = "Confirm Password Is Required")]

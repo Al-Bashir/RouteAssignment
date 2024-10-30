@@ -1,0 +1,8 @@
+﻿@model string
+
+<form asp-action="Index">
+    <div class="form-group" style="display:flex; gap: 1rem">
+        <input type="search" name="SearchValue" class="form-control" placeholder="@Model" required />
+        <input type="submit" value="Search" class="btn btn-success" />
+    </div>
+</form>

@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace C42_G01_MVC01_Demo.PL.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Viewer")]
     public class EmployeeController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -32,13 +32,13 @@ namespace C42_G01_MVC01_Demo.PL.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Index(string searchforname) 
+        public IActionResult Index(string SearchValue) 
         {
-            if (searchforname is null)
+            if (SearchValue is null)
             {
                 return BadRequest();
             }
-            var result = _unitOfWork.EmployeeRepository.GetEmployeesByName(searchforname);
+            var result = _unitOfWork.EmployeeRepository.GetEmployeesByName(SearchValue);
             var MappedResult = _mapper.Map<IEnumerable<Employee>, IEnumerable<EmployeeViewModel>>(result);
             return View(MappedResult);
         }
@@ -87,6 +87,7 @@ namespace C42_G01_MVC01_Demo.PL.Controllers
             var EmployeeVM = _mapper.Map<Employee, EmployeeViewModel>(Employee);
             return View(ViewName, EmployeeVM);
         }
+        [Authorize(Roles = "CanEdit")]
         public async Task<IActionResult> Edit(int id) 
         {
             ViewBag.Departments = await _unitOfWork.DepartmentRepository.GetAllAsync();
@@ -94,6 +95,7 @@ namespace C42_G01_MVC01_Demo.PL.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "CanEdit")]
         public async Task<IActionResult> Edit(EmployeeViewModel employeeVM, [FromRoute] int id) 
         {
             if (employeeVM.Id != id)
