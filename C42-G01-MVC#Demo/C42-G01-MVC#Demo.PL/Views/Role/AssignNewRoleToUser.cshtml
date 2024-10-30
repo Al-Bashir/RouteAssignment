@@ -1,0 +1,65 @@
+﻿@model IEnumerable<LightUserViewModel>
+@{
+    ViewData["Title"] = "AssignNewRoleToUser";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string RoleName = TempData["RoleName"] as string;
+}
+
+<!-- Full-screen green overlay background -->
+<div id="overlay" style="background-color:rgba(237, 248, 238, 1); position:fixed; top:0; left:0; width:100%; height:100%; z-index:1000;">
+    <!-- Centered dialog -->
+    <div id="dialog" style="background:rgba(251, 253, 251, 1); position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); padding:20px; border-radius:10px; width:80%; max-width:600px; z-index:1001;">
+        <div id="dialogContent">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <h3 class="font-weight-bold text-center">Users List</h3>
+            <br />
+            <form asp-action="AssignNewRoleToUser" method="get">
+                <div class="form-group" style="display:flex; gap: 1rem">
+                    <input type="search" name="SearchValue" class="form-control" placeholder="Search For User By Name" required />
+                    <input type="hidden" name="RoleName" value="@RoleName" />
+                    <input type="submit" value="Search" class="btn btn-success" />
+                </div>
+            </form>
+            <table class="table table-striped table-hover mt-3">
+                <thead>
+                    <tr>
+                        <td>@Html.DisplayNameFor(U => U.Id)</td>
+                        <td>@Html.DisplayNameFor(U => U.FullName)</td>
+                        <td>Add</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var User in Model)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(U => User.Id)</td>
+                            <td>@Html.DisplayFor(U => User.FullName)</td>
+                            <td><a onclick="addToRole('@User.Id', '@TempData["RoleName"]', this)"><i class="fa-icon-selector fa-solid fa-person-circle-plus text-success"></i></a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <center>
+            <a asp-action="RoleAssignment" asp-route-id="@TempData["RoleId"]" class="btn btn-dark"> Close </a>
+        </center>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+            function addToRole(userId, roleName, iconElement) {
+            $.ajax({
+                url: '@Url.Action("AssignNewRoleToUser", "Role")',
+                type: 'POST',
+                data: { userId: userId, roleName: roleName },
+                success: function (response) {
+                    if (response.success) {
+                        $(iconElement).find('.fa-icon-selector').removeClass('fa-person-circle-plus').addClass('fa-check');
+                    }
+                }
+            });
+        }
+    </script>
+}

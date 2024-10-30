@@ -40,7 +40,12 @@
                     <td>@Html.DisplayFor(E => user.LName)</td>
                     <td>@Html.DisplayFor(E => user.Email)</td>
                     <td>@Html.DisplayFor(E => user.PhoneNumber)</td>
-                    <td>@Html.DisplayFor(E => user.Roles)</td>
+                    <td>@{
+                        foreach (var Role in user.Roles)
+                            {
+                                <div>@Role</div>
+                            }    
+                    }</td>
                     <partial name="_IconsPartialView" model="@user.Id" />
                 </tr>
             }

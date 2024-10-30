@@ -2,9 +2,11 @@
 
 using C42_G01_MVC_Demo.DAL.Models;
 using C42_G01_MVC01_Demo.PL.Helpers;
+using C42_G01_MVC01_Demo.PL.Validation;
 using C42_G01_MVC01_Demo.PL.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading.Tasks;
 
@@ -14,11 +16,15 @@ namespace C42_G01_MVC01_Demo.PL.Controllers
 	{
 		private readonly UserManager<ApplicationUser> _userManager;
 		private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IMailSetting _mailSetting;
+		private readonly ITwilioSMSSetting _twilioSMSSetting;
 
-		public AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+		public AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IMailSetting mailSetting, ITwilioSMSSetting twilioSMSSetting)
 		{
 			_userManager = userManager;
 			_signInManager = signInManager;
+            _mailSetting = mailSetting;
+			_twilioSMSSetting = twilioSMSSetting;
 		}
 		public IActionResult Register()
 		{
@@ -36,12 +42,21 @@ namespace C42_G01_MVC01_Demo.PL.Controllers
 			}
 			if (ModelState.IsValid)
 			{
+				if (registerViewModel.PhoneNumber is not null)
+				{
+					var IsPhoneNumberRegisterBefore = await _userManager.Users.AnyAsync(U => U.PhoneNumber == registerViewModel.PhoneNumber);
+					if (IsPhoneNumberRegisterBefore == true)
+					{
+						ModelState.AddModelError(string.Empty, "Phone Number Has Been Used Before, Please Try With New Phone Number.");
+					}
+				}
 				var User = new ApplicationUser()
 				{
 					UserName = registerViewModel.Email.Split('@')[0],
 					Email = registerViewModel.Email,
 					FName = registerViewModel.FName,
 					LName = registerViewModel.LName,
+					PhoneNumber = registerViewModel.PhoneNumber,
 					IsAgreed = registerViewModel.IsAgreed,
 				};
 				var Result = await _userManager.CreateAsync(User, registerViewModel.Password);
@@ -120,31 +135,62 @@ namespace C42_G01_MVC01_Demo.PL.Controllers
 			}
 			if (ModelState.IsValid)
 			{
-				var User = await _userManager.FindByEmailAsync(model.Email);
-				if (User != null)
+				if (ValidationMethods.IsValidEmail(model.EmailOrPhone))
 				{
-					var token = await _userManager.GeneratePasswordResetTokenAsync(User);
-					var ResetPasswordLink = Url.Action("ResetPassword", "Auth", new { email = model.Email, token = token }, Request.Scheme);
-					var ForgetPasswordEmail = new Email()
+					var User = await _userManager.FindByEmailAsync(model.EmailOrPhone);
+					if (User != null)
 					{
-						Id = Guid.NewGuid().ToString(),
-						To = model.Email,
-						Subject = "Reset Password",
-						Body = "Click The Below Link To Reset The Password:\n" + ResetPasswordLink
-					};
-					try
-					{
-						EmailSettings.SendEmail(ForgetPasswordEmail);
+						var token = await _userManager.GeneratePasswordResetTokenAsync(User);
+						var ResetPasswordLink = Url.Action("ResetPassword", "Auth", new { email = model.EmailOrPhone, token = token }, Request.Scheme);
+						var ForgetPasswordEmail = new Email()
+						{
+							Id = Guid.NewGuid().ToString(),
+							To = model.EmailOrPhone,
+							Subject = "Reset Password",
+							Body = "Click The Below Link To Reset The Password:\n" + ResetPasswordLink
+						};
+						try
+						{
+							_mailSetting.SendEmail(ForgetPasswordEmail);
+						}
+						catch (Exception ex)
+						{
+							ModelState.AddModelError(string.Empty, ex.Message);
+						}
+						return RedirectToAction(nameof(CheckYourInbox));
 					}
-					catch (Exception ex)
+					else
 					{
-						ModelState.AddModelError(string.Empty, ex.Message);
+						ModelState.AddModelError(string.Empty, "The Email You Entered Is Not Valid, Please Enter A Valid Email");
 					}
-					return RedirectToAction(nameof(CheckYourInbox));
 				}
-				else 
+				if (ValidationMethods.IsValidPhoneNumber(model.EmailOrPhone)) 
 				{
-					ModelState.AddModelError(string.Empty, "The Email You Entered Is Not Valid, Please Enter A Valid Email");
+					var User = await _userManager.Users.FirstOrDefaultAsync(U => U.PhoneNumber == model.EmailOrPhone);
+					if (User != null)
+					{
+						var token = await _userManager.GeneratePasswordResetTokenAsync(User);
+						var ResetPasswordLink = Url.Action("ResetPassword", "Auth", new { email = model.EmailOrPhone, token = token }, Request.Scheme);
+						var ForgetPasswordSMS = new SMS()
+						{
+							PhoneNumber = model.EmailOrPhone,
+							SMSBody = "Click The Below Link To Reset The Password:\n" + ResetPasswordLink
+						};
+						try
+						{
+							_twilioSMSSetting.SendSMS(ForgetPasswordSMS);
+						}
+						catch (Exception ex)
+						{
+							ModelState.AddModelError(string.Empty, ex.Message);
+						}
+						return RedirectToAction(nameof(CheckYourInbox));
+					}
+					else 
+					{
+						ModelState.AddModelError(string.Empty, "The Phone Number You Entered Is Not Valid, Please Enter A Valid Phone Number");
+
+					}
 				}
 			}
 			return View(nameof(ForgetPassword), model);
@@ -155,9 +201,12 @@ namespace C42_G01_MVC01_Demo.PL.Controllers
 		}
 		public IActionResult ResetPassword(string email, string token) 
 		{
-			TempData["email"] = email;
-			TempData["token"] = token;
-			return View();
+			var model = new RestPasswordViewModel() 
+			{
+				EmailOrPhone = email,
+				Token = token
+			};
+			return View(model);
 		}
 		[HttpPost]
 		[ValidateAntiForgeryToken]
@@ -169,14 +218,20 @@ namespace C42_G01_MVC01_Demo.PL.Controllers
 			}
 			if (ModelState.IsValid) 
 			{
-				string email = TempData["email"] as string;
-				string token = TempData["token"] as string;	
-				var User = await _userManager.FindByEmailAsync(email);
+				ApplicationUser User = null;
+				if (ValidationMethods.IsValidEmail(model.EmailOrPhone))
+				{
+					User = await _userManager.FindByEmailAsync(model.EmailOrPhone);
+				}
+				else if(ValidationMethods.IsValidPhoneNumber(model.EmailOrPhone))
+				{
+					User = await _userManager.Users.FirstOrDefaultAsync(U => U.PhoneNumber == model.EmailOrPhone);
+				}
 				if (User != null) 
 				{
 					try
 					{
-						var result = await _userManager.ResetPasswordAsync(User, token, model.NewPassword);
+						var result = await _userManager.ResetPasswordAsync(User, model.Token, model.NewPassword);
 						if (result.Succeeded)
 						{
 							return RedirectToAction(nameof(Login));

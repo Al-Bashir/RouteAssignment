@@ -9,6 +9,9 @@ namespace C42_G01_MVC01_Demo.PL.MappingProfiles
         public UserProfile()
         {
             CreateMap<ApplicationUser, UserViewModel>().ReverseMap();
+
+            CreateMap<ApplicationUser, LightUserViewModel>()
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FName + " " + src.LName)).ReverseMap();
         }
     }
 }

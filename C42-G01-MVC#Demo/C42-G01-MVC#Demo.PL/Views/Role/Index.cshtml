@@ -27,6 +27,7 @@
                 <td>Details</td>
                 <td>Update</td>
                 <td>Delete</td>
+                <td>Role Assignment</td>
             </tr>
         </thead>
         <tbody>
@@ -36,6 +37,7 @@
                     <td>@Html.DisplayFor(E => Role.Id)</td>
                     <td>@Html.DisplayFor(E => Role.Name)</td>
                     <partial name="_IconsPartialView" model="@Role.Id" />
+                    <td><a asp-action="RoleAssignment" asp-route-id="@Role.Id"><i class="fa-solid fa-user-plus"></i></a></td>
                 </tr>
             }
         </tbody>

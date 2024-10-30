@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace C42_G01_MVC01_Demo.PL.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Viewer")]
     public class DepartmentController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -57,12 +57,14 @@ namespace C42_G01_MVC01_Demo.PL.Controllers
             return View(viewName, department);
         }
         [HttpGet]
+        [Authorize(Roles = "CanEdit")]
         public async Task<IActionResult> Edit(int? id) 
         {
             return await Details(id, "Edit");
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "CanEdit")]
         public async Task<IActionResult> Edit(Department department, [FromRoute] int id) 
         {
             if (department.Id != id) 
